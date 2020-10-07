@@ -11,7 +11,7 @@ import java.util.List;
 
 @Transactional
 @Repository
-public class AdDao {
+public class AdRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -27,6 +27,13 @@ public class AdDao {
     public Ad create(Ad ad) {
         entityManager.persist(ad);
         return ad;
+    }
+
+    public void delete(long id) {
+        Ad ad = entityManager.find(Ad.class, id);
+        if (ad != null) {
+            entityManager.remove(ad);
+        }
     }
 
 }
