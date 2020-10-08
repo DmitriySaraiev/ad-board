@@ -36,3 +36,10 @@ create table ad
     constraint ad_user_id_fk
         foreign key (user_id) references user (id)
 );
+
+insert into user(username, password) values ('admin', 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhc2QxMjMiLCJleHAiOjE2MDM0MDA0MDB9.IX6XKzNcV1CVBrgBI5lsUWtogJJmbN20H3Ssz9ECfg3uiNLcRk-PohxOhaXrmhzj9JkOHZPvRzCjR4Pv7Z9XCQ');
+
+insert into role(name) values ('ADMIN');
+insert into role(name) values ('USER');
+
+insert into user_role(user _id, role_id) values (1, 1);
