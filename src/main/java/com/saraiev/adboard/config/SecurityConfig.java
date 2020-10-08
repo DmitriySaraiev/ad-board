@@ -1,9 +1,10 @@
 package com.saraiev.adboard.config;
 
+import com.saraiev.adboard.domain.Roles;
 import com.saraiev.adboard.security.JwtFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,8 +15,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -24,12 +28,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/user/*").hasRole("ADMIN")
-                .antMatchers("/ad/*").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/register", "/auth").permitAll()
-                .and()
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .antMatchers(HttpMethod.DELETE, "/user").hasAuthority(Roles.ADMIN.getName())
+                .antMatchers(HttpMethod.PUT, "/user").hasAnyAuthority(Roles.ADMIN.getName(), Roles.USER.getName())
+                .antMatchers(HttpMethod.GET, "/user").hasAnyAuthority(Roles.ADMIN.getName(), Roles.USER.getName())
+                .antMatchers("/ad/*").hasAnyAuthority(Roles.ADMIN.getName(), Roles.USER.getName())
+                .antMatchers("/register", "/auth").permitAll();
     }
 
     @Bean

@@ -1,14 +1,14 @@
 package com.saraiev.adboard.controller;
 
 import com.saraiev.adboard.domain.User;
+import com.saraiev.adboard.payload.BaseApiResponse;
+import com.saraiev.adboard.payload.CommonResponses;
 import com.saraiev.adboard.payload.DataApiResponse;
-import com.saraiev.adboard.payload.user.CreateUserApiRequest;
+import com.saraiev.adboard.payload.user.UpdateUserApiRequest;
 import com.saraiev.adboard.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -21,10 +21,15 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    DataApiResponse<User> create(@RequestBody @Valid CreateUserApiRequest request) {
-        return new DataApiResponse<>(userService.create(request));
+    @PutMapping
+    DataApiResponse<User> update(@RequestBody @Valid UpdateUserApiRequest request, HttpServletRequest servletRequest) {
+        return new DataApiResponse<>(userService.update(request, servletRequest));
     }
 
+    @DeleteMapping
+    BaseApiResponse delete(@RequestParam("id") Long id) {
+        userService.delete(id);
+        return CommonResponses.successResponse();
+    }
 
 }

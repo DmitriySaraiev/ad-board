@@ -21,15 +21,15 @@ public class PagedData<T> {
     private Long totalItems;
 
     public static <T> PagedData<T> create(BasePagedRequest request, List<T> list, Long maxCount) {
-        PagedData<T> companyPagedData = new PagedData<>();
-        companyPagedData.setItems(list);
-        companyPagedData.setTotalItems(maxCount);
-        companyPagedData.setCurrentPage(request.getPage());
+        PagedData<T> pagedData = new PagedData<>();
+        pagedData.setItems(list);
+        pagedData.setTotalItems(maxCount);
+        pagedData.setCurrentPage(request.getPage());
         if ((double) maxCount % (double) request.getSize() != 0) {
-            companyPagedData.setTotalPages((maxCount / request.getSize()) + 1);
+            pagedData.setTotalPages((maxCount / request.getSize()) + 1);
         } else {
-            companyPagedData.setTotalPages((maxCount / request.getSize()));
+            pagedData.setTotalPages((maxCount / request.getSize()));
         }
-        return companyPagedData;
+        return pagedData;
     }
 }

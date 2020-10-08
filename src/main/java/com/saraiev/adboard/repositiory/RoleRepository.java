@@ -15,12 +15,10 @@ public class RoleRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Role> getAll() {
-        return entityManager.createQuery("from role r", Role.class).getResultList();
-    }
-
-    public Role getById(int id) {
-        return entityManager.find(Role.class, id);
+    public Role getByName(String name) {
+        return entityManager.createQuery("select r from  Role r where r.name = ?1", Role.class)
+                .setParameter(1, name)
+                .getSingleResult();
     }
 
     public Role create(Role role) {

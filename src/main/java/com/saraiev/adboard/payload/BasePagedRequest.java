@@ -10,7 +10,7 @@ public abstract class BasePagedRequest {
     Long page = 0L;
 
     @JsonProperty("size")
-    Long size = 10L;
+    Integer size = 10;
 
     @JsonProperty("keyword")
     private String keyword = "";

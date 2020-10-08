@@ -1,11 +1,13 @@
 package com.saraiev.adboard.security;
 
+import com.saraiev.adboard.error.UnauthorizedException;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.xml.bind.DatatypeConverter;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -18,10 +20,10 @@ public class JwtProvider {
     @Value("$(jwt.secret)")
     private String jwtSecret;
 
-    public String generateToken(String login) {
+    public String generateToken(String username) {
         Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
-                .setSubject(login)
+                .setSubject(username)
                 .setExpiration(date)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
@@ -48,6 +50,16 @@ public class JwtProvider {
     public String getLoginFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
         return claims.getSubject();
+    }
+
+    public Claims decodeJWT(String jwt) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(jwtSecret))
+                    .parseClaimsJws(jwt).getBody();
+        } catch (Exception e) {
+            throw new UnauthorizedException("JWT parsing exception");
+        }
     }
 
 }

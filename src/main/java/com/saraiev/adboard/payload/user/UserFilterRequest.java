@@ -9,12 +9,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class UserFilterRequest extends BasePagedRequest {
 
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("name")
-    private String login;
-
+    @JsonProperty("username")
+    private String username;
 
 }
